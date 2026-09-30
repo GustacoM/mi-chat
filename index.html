@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Chat</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel2: #1f2937;
+        --primary: #22c55e;
+        --primary-dark: #16a34a;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --warning: #fbbf24;
+        --danger: #ef4444;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0f172a, #111827);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .container {
+        width: min(92vw, 420px);
+        background: rgba(17, 24, 39, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 30px 22px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin: 0 0 10px;
+        text-align: center;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        text-align: center;
+        margin-bottom: 22px;
+        font-size: 0.98rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        color: var(--muted);
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 12px;
+        border-radius: 10px;
+        border: 1px solid #374151;
+        background: var(--panel2);
+        color: var(--text);
+        font-size: 1rem;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: var(--primary);
+      }
+
+      .field {
+        margin-bottom: 14px;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 10px;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .primary {
+        background: var(--primary);
+        color: #052e16;
+      }
+
+      .primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .secondary {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .secondary:hover {
+        background: #2563eb;
+      }
+
+      .status {
+        margin-top: 18px;
+        padding: 12px 10px;
+        border-radius: 10px;
+        font-size: 0.92rem;
+        text-align: center;
+        background: rgba(251, 191, 36, 0.12);
+        color: var(--warning);
+        border: 1px solid rgba(251, 191, 36, 0.25);
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mi Chat</h1>
+      <p class="subtitle">Accede para entrar y llamar</p>
+
+      <div id="loginPanel">
+        <div class="field">
+          <label for="name">Tu nombre</label>
+          <input id="name" type="text" placeholder="Escribe tu nombre" />
+        </div>
+
+        <div class="field">
+          <label for="room">Sala</label>
+          <input id="room" type="text" placeholder="Ejemplo: soporte" />
+        </div>
+
+        <button class="primary" id="joinBtn">Entrar</button>
+      </div>
+
+      <div id="callPanel" class="hidden">
+        <p class="subtitle">Bienvenido</p>
+        <button class="secondary" id="callBtn">Llamar</button>
+        <button class="primary" id="endBtn">Finalizar</button>
+
+        <div id="hoursMsg" class="status">
+          Horario disponible: 6:00 AM - 9:00 PM
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const loginPanel = document.getElementById("loginPanel");
+      const callPanel = document.getElementById("callPanel");
+      const joinBtn = document.getElementById("joinBtn");
+      const callBtn = document.getElementById("callBtn");
+      const endBtn = document.getElementById("endBtn");
+      const hoursMsg = document.getElementById("hoursMsg");
+
+      function isWithinHours() {
+        const now = new Date();
+        const totalMinutes = now.getHours() * 60 + now.getMinutes();
+        const start = 6 * 60;
+        const end = 21 * 60;
+
+        return totalMinutes >= start && totalMinutes < end;
+      }
+
+      joinBtn.addEventListener("click", () => {
+        const name = document.getElementById("name").value.trim();
+        const room = document.getElementById("room").value.trim();
+
+        if (!name || !room) {
+          alert("Debes escribir tu nombre y la sala.");
+          return;
+        }
+
+        if (!isWithinHours()) {
+          hoursMsg.textContent = "Las llamadas solo están disponibles de 6:00 AM a 9:00 PM.";
+          hoursMsg.style.color = "#fca5a5";
+          hoursMsg.style.background = "rgba(239, 68, 68, 0.12)";
+          hoursMsg.style.borderColor = "rgba(239, 68, 68, 0.25)";
+        } else {
+          hoursMsg.textContent = "Horario disponible: 6:00 AM - 9:00 PM";
+          hoursMsg.style.color = "#fbbf24";
+          hoursMsg.style.background = "rgba(251, 191, 36, 0.12)";
+          hoursMsg.style.borderColor = "rgba(251, 191, 36, 0.25)";
+        }
+
+        loginPanel.classList.add("hidden");
+        callPanel.classList.remove("hidden");
+      });
+
+      callBtn.addEventListener("click", () => {
+        if (!isWithinHours()) {
+          alert("Las llamadas solo están permitidas de 6:00 AM a 9:00 PM.");
+          return;
+        }
+
+        alert("Aquí iría la llamada real con audio.");
+      });
+
+      endBtn.addEventListener("click", () => {
+        callPanel.classList.add("hidden");
+        loginPanel.classList.remove("hidden");
+      });
+    </script>
+  </body>
+</html>
